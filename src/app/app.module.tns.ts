@@ -11,18 +11,23 @@ import { LoginComponent } from '@src/app/pages/login/login.component';
 import { NativeScriptFormsModule } from 'nativescript-angular/forms';
 
 // Uncomment and add to NgModule imports  if you need to use the HTTP wrapper
-// import { NativeScriptHttpClientModule } from 'nativescript-angular/http-client';
+import { NativeScriptHttpClientModule } from 'nativescript-angular/http-client';
+import { NativeScriptUIListViewModule } from 'nativescript-ui-listview/angular';
+import { navComponents } from '@src/app/app.routes';
+
+
 
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent,
-    LoginComponent,
+    ...navComponents,
   ],
   imports: [
     NativeScriptModule,
     NativeScriptFormsModule,
     AppRoutingModule,
+    NativeScriptHttpClientModule,
+    NativeScriptUIListViewModule
   ],
   providers: [],
   bootstrap: [AppComponent],

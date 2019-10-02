@@ -10,7 +10,20 @@ StackLayout {
   padding: 10 16;
   background-color: #f0f0f0;
 }
+
+@keyframes spin {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360);
+  }
+}
+
 image {
+  animation-name: spin;
+  animation-iteration-count: infinite;
+  animation-duration: 10s;
   margin-bottom: 20;
   height: 70;
 }
@@ -26,4 +39,11 @@ TextField {
 TextField {
   placeholder-color: #c4afb4;
   color: black;
+}
+
+.dark {
+  background-color: #301217;
+  TextField {
+    color: #c4afb4;
+  }
 }
