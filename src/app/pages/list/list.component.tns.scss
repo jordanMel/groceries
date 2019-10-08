@@ -1,2 +1,42 @@
 /* Add mobile styles for the component here.  */
 
+.add-bar {
+  background-color: #cb1d00;
+  padding: 5;
+}
+.add-bar image {
+  height: 25;
+  vertical-align: center;
+  margin-left: 10;
+  margin-right: 10;
+}
+.add-bar TextField {
+  padding: 10;
+}
+label {
+  background-color: white;
+  border-bottom-width: 1;
+  border-bottom-color: gray;
+}
+
+.delete-view {
+  background-color: #cb1d00;
+  padding: 20;
+}
+.delete-view label {
+  color: white;
+}
+
+ListView {
+  opacity: 0;
+}
+
+.visible {
+  animation-name: show;
+  animation-duration: 1s;
+  animation-fill-mode: forwards;
+}
+@keyframes show {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

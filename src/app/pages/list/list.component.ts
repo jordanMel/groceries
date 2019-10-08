@@ -1,20 +1,87 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+
+import { Grocery } from '@src/app/shared/grocery/grocery.model';
+import { GroceryService } from '@src/app/shared/grocery/grocery.service';
+
+import { TextField } from 'tns-core-modules/ui/text-field';
+
+
+import { ListViewEventData, RadListView } from 'nativescript-ui-listview';
+import { View } from 'tns-core-modules/ui/core/view';
+
 
 @Component({
   selector: 'app-list',
+  moduleId: module.id,
   templateUrl: './list.component.html',
-  styleUrls: ['./list.component.scss']
+  styleUrls: ['./list.component.scss'],
+  providers: [GroceryService]
 })
 export class ListComponent implements OnInit {
-
-  groceryList: Array<Object> = [];
-
-  constructor() { }
+  groceryList: Array<Grocery> = [];
+  grocery = '';
+  isLoading = false;
+  listLoaded = false;
+  @ViewChild('groceryTextField', { static: false }) groceryTextField: ElementRef;
+  constructor(private groceryService: GroceryService) { }
 
   ngOnInit() {
-    this.groceryList.push({ name: 'Apples' });
-    this.groceryList.push({ name: 'Bananas' });
-    this.groceryList.push({ name: 'Oranges' });
+    this.isLoading = true;
+
+    this.groceryService.load()
+      .subscribe((loadedGroceries: []) => {
+        loadedGroceries.forEach((groceryObject: Grocery) => {
+          this.groceryList.unshift(groceryObject);
+        });
+        this.isLoading = false;
+        this.listLoaded = true;
+      });
   }
 
+
+  add() {
+    if (this.grocery.trim() === '') {
+      alert('Enter a grocery item');
+      return;
+    }
+
+    // Dismiss the keyboard
+    const textField = <TextField>this.groceryTextField.nativeElement;
+    textField.dismissSoftInput();
+
+    this.groceryService.add(this.grocery)
+      .subscribe(
+        (groceryObject: Grocery) => {
+          this.groceryList.unshift(groceryObject);
+          this.grocery = '';
+        },
+        () => {
+          alert({
+            message: 'An error occurred while adding an item to your list.',
+            okButtonText: 'OK'
+          });
+          this.grocery = '';
+        }
+      );
+  }
+
+
+
+  onSwipeCellStarted(args: ListViewEventData) {
+    const swipeLimits = args.data.swipeLimits;
+    const swipeView = args.object;
+    const rightItem = swipeView.getViewById<View>('delete-view');
+    swipeLimits.right = rightItem.getMeasuredWidth();
+    swipeLimits.left = 0;
+    swipeLimits.threshold = rightItem.getMeasuredWidth() / 2;
+  }
+
+  delete(args: ListViewEventData) {
+    const grocery = <Grocery>args.object.bindingContext;
+    this.groceryService.delete(grocery.id)
+      .subscribe(() => {
+        const index = this.groceryList.indexOf(grocery);
+        this.groceryList.splice(index, 1);
+      });
+  }
 }
